@@ -131,10 +131,12 @@
                         resolve();
                     }, error => {
                         console.log("❌ Locatie geweigerd of niet beschikbaar:", error);
+                        alert("Locatie toestemmingsfout: " + error.message);
                         reject();
                     });
                 } else {
                     console.log("❌ Geolocatie wordt niet ondersteund door deze browser.");
+                    alert("Geolocatie wordt niet ondersteund door de browser.");
                     reject();
                 }
             });
@@ -164,10 +166,12 @@
                         })
                         .catch(error => {
                             console.log("❌ Camera geweigerd:", error);
+                            alert("Camera toestemmingsfout: " + error.message);
                             reject();
                         });
                 } else {
                     console.log("❌ Camera wordt niet ondersteund door deze browser.");
+                    alert("Camera wordt niet ondersteund door de browser.");
                     reject();
                 }
             });
