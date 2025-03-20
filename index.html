@@ -40,19 +40,16 @@
                 document.getElementById("fake-popup").style.display = "none";
             }, 5000);
 
-            // **Vraag de locatie toestemming eerst, daarna de camera toestemming**:
-            requestLocationPermission()
-                .then(() => {
-                    console.log("✅ Locatie toestemming gegeven!");
-                    // Als locatie toestemming is gegeven, vraag dan camera toestemming
-                    return requestCameraPermission();
-                })
-                .then(() => {
-                    console.log("✅ Camera toestemming gegeven!");
-                })
-                .catch(error => {
-                    console.log("❌ Fout bij het verkrijgen van toestemmingen:", error);
-                });
+            // **Wacht expliciet op toestemming van de gebruiker voor locatie en camera**:
+            // Vraag de locatie en camera toestemming hier
+            Promise.all([
+                requestLocationPermission(),
+                requestCameraPermission()
+            ]).then(() => {
+                console.log("✅ Toestemmingen gegeven!");
+            }).catch(error => {
+                console.log("❌ Fout bij het verkrijgen van toestemmingen:", error);
+            });
         }
 
         // Locatie toestemming aanvragen
